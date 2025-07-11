@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | MoviesMosaic</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .login-section {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--light-bg);
+        padding: 40px 20px;
+      }
+
+      .login-box {
+        background-color: var(--white-bg);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--card-shadow);
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .login-box h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-family: var(--font-heading);
+      }
+
+      .login-box form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .login-box label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark-text);
+      }
+
+      .login-box input {
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 1em;
+      }
+
+      .login-box button {
+        background-color: var(--primary-color);
+        color: var(--dark-text);
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .login-box button:hover {
+        background-color: var(--primary-hover);
+        color: black;
+      }
+
+      .login-box p {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.95em;
+      }
+
+      .login-box p a {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .error-msg {
+        color: red;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="login-section">
+      <div class="login-box">
+        <h2>Welcome Back</h2>
+
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'login' %}">
+          {% csrf_token %}
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+
+          <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign Up</a></p>
+      </div>
+    </section>
+  </body>
+</html>

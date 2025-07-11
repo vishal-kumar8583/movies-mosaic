@@ -1,0 +1,580 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ movie.title }} | MoviesMosaic</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(120deg, #f8fafc 0%, #fffbe7 100%);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .movie-header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 40px;
+      }
+
+      .poster img {
+        max-width: 300px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .movie-details {
+        flex: 1;
+      }
+
+      .movie-details h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        color: #343a40;
+      }
+
+      .movie-meta {
+        font-size: 1em;
+        margin-bottom: 15px;
+        color: #555;
+      }
+
+      .movie-meta p {
+        margin: 8px 0;
+      }
+
+      .rating-box {
+        display: inline-block;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: #e6b800;
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 18px;
+        margin-top: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 150px;
+        min-height: 60px;
+        padding: 0 24px;
+        font-size: 1.1em;
+        font-weight: 700;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(90deg, #fff7b2 0%, #ffe066 100%);
+        color: #222;
+        box-shadow: 0 2px 8px 0 rgba(255, 236, 140, 0.10);
+        cursor: pointer;
+        transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        text-decoration: none;
+        margin: 0;
+      }
+      .action-btn svg {
+        margin-right: 10px;
+        font-size: 1.2em;
+      }
+      .action-btn:hover {
+        background: linear-gradient(90deg, #ffe066 0%, #fff7b2 100%);
+        transform: translateY(-2px) scale(1.04);
+        box-shadow: 0 4px 16px 0 rgba(255, 236, 140, 0.18);
+        color: #bfa100;
+      }
+
+      .action-btn.play-trailer {
+        background: linear-gradient(90deg, #b2d8ff 0%, #66b3ff 100%);
+        color: #174a6c;
+      }
+      .action-btn.play-trailer:hover {
+        background: linear-gradient(90deg, #66b3ff 0%, #b2d8ff 100%);
+        color: #174a6c;
+      }
+      .action-btn.saved-reviews {
+        background: linear-gradient(90deg, #c8f7c5 0%, #7be495 100%);
+        color: #217a3c;
+      }
+      .action-btn.saved-reviews:hover {
+        background: linear-gradient(90deg, #7be495 0%, #c8f7c5 100%);
+        color: #217a3c;
+      }
+      .action-btn.add-playlist {
+        background: linear-gradient(90deg, #fff7b2 0%, #ffe066 100%);
+        color: #bfa100;
+      }
+      .action-btn.add-playlist:hover {
+        background: linear-gradient(90deg, #ffe066 0%, #fff7b2 100%);
+        color: #bfa100;
+      }
+
+      .overview-section {
+        margin-top: 30px;
+      }
+
+      .overview-section h2 {
+        font-size: 1.4em;
+        margin-bottom: 10px;
+        color: #222;
+      }
+
+      .overview-section p {
+        line-height: 1.7;
+        color: #444;
+      }
+
+      .review-box {
+        margin-top: 54px;
+        background: linear-gradient(135deg, #fffbe7 60%, #ffe066 100%);
+        border-radius: 32px;
+        box-shadow: 0 12px 36px 0 rgba(255, 200, 0, 0.13), 0 4px 18px 0 rgba(255, 245, 180, 0.13);
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+        animation: slideUpFadeIn 1.1s cubic-bezier(.4,0,.2,1);
+        border: none;
+        position: relative;
+        overflow: hidden;
+      }
+      @keyframes slideUpFadeIn {
+        from { opacity: 0; transform: translateY(60px) scale(0.97); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .review-box h2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        text-align: center;
+        margin-bottom: 28px;
+        color: #e6b800;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 2.1em;
+        font-weight: 800;
+        letter-spacing: 1px;
+        position: relative;
+      }
+      .review-box h2:after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 50%;
+        bottom: -8px;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+        border-radius: 2px;
+      }
+      .review-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fffbe7;
+        border-radius: 50%;
+        width: 38px;
+        height: 38px;
+        box-shadow: 0 2px 8px 0 rgba(255, 236, 140, 0.13);
+        font-size: 1.3em;
+      }
+
+      .reviews-list {
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .single-review {
+        background: linear-gradient(120deg, #fffde9 60%, #fffbe7 100%);
+        border-radius: 14px;
+        box-shadow: 0 2px 12px 0 rgba(255, 236, 140, 0.10);
+        padding: 18px 22px 14px 22px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .review-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+
+      .review-username {
+        font-weight: 700;
+        color: #e6b800;
+        font-size: 1.08em;
+      }
+
+      .review-date {
+        color: #888;
+        font-size: 0.98em;
+      }
+
+      .review-text {
+        color: #444;
+        font-size: 1.08em;
+        margin-bottom: 10px;
+      }
+
+      .review-rating-badge {
+        display: inline-flex;
+        align-items: center;
+        background: linear-gradient(90deg, #fff7b2 0%, #ffe066 100%);
+        color: #222;
+        font-weight: 700;
+        font-size: 1.08em;
+        border-radius: 999px;
+        padding: 6px 18px 6px 14px;
+        box-shadow: 0 1px 4px 0 rgba(255, 236, 140, 0.10);
+        margin-bottom: 6px;
+        margin-right: 8px;
+      }
+
+      .review-rating-badge svg {
+        margin-right: 7px;
+        font-size: 1.1em;
+      }
+
+      .save-btn {
+        display: inline-block;
+        margin-top: 7px;
+        color: #e6b800;
+        font-weight: 600;
+        background: none;
+        border: none;
+        font-size: 1.08em;
+        text-decoration: none;
+        transition: color 0.2s;
+        cursor: pointer;
+      }
+
+      .save-btn:hover {
+        color: #bfa100;
+        text-decoration: underline;
+      }
+
+      .review-form {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+        align-items: flex-start;
+      }
+      .review-form textarea {
+        width: 100%;
+        padding: 18px;
+        font-size: 1.13em;
+        border-radius: 16px;
+        border: 2px solid #111;
+        background: #fffde9;
+        resize: vertical;
+        transition: box-shadow 0.2s;
+        box-shadow: 0 2px 12px 0 rgba(255, 236, 140, 0.10);
+      }
+      .review-form textarea:focus {
+        outline: none;
+        box-shadow: 0 4px 18px 0 rgba(255, 236, 140, 0.18), 0 0 0 2px #111;
+      }
+      .review-form label {
+        font-size: 1.15em;
+        color: #444;
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      .slider-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        animation: slideInInput 0.8s cubic-bezier(.4,0,.2,1);
+        position: relative;
+        margin-bottom: 18px;
+      }
+      .slider-popup {
+        position: absolute;
+        left: 0;
+        top: -32px;
+        transform: translateX(-50%);
+        background: #2d2dbb;
+        color: #fff;
+        font-size: 1em;
+        font-weight: 700;
+        padding: 3px 14px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px 0 rgba(44,44,187,0.13);
+        pointer-events: none;
+        transition: left 0.2s cubic-bezier(.4,0,.2,1);
+        z-index: 2;
+      }
+      .slider-labels {
+        display: flex;
+        width: 260px;
+        justify-content: space-between;
+        margin-top: 8px;
+        font-size: 1.08em;
+        color: #2d2dbb;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        user-select: none;
+      }
+      .review-form input[type="range"] {
+        width: 260px;
+        margin-bottom: 0;
+        height: 12px;
+        border-radius: 8px;
+        outline: none;
+        background: linear-gradient(90deg, #2d2dbb 0%, #2d2dbb var(--percent, 50%), #fff 0%, #fff 100%);
+        box-shadow: 0 2px 12px 0 rgba(44,44,187,0.10);
+        position: relative;
+      }
+      .review-form input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px 0 rgba(44,44,187,0.18);
+        cursor: pointer;
+        border: 6px solid #2d2dbb;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .review-form input[type="range"]:focus::-webkit-slider-thumb {
+        background: #fff;
+        border-color: #1a1a99;
+        transform: scale(1.08);
+      }
+      .review-form input[type="range"]::-moz-range-thumb {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px 0 rgba(44,44,187,0.18);
+        cursor: pointer;
+        border: 6px solid #2d2dbb;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .review-form input[type="range"]:focus::-moz-range-thumb {
+        background: #fff;
+        border-color: #1a1a99;
+        transform: scale(1.08);
+      }
+      .review-form input[type="range"]::-ms-thumb {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 8px 0 rgba(44,44,187,0.18);
+        cursor: pointer;
+        border: 6px solid #2d2dbb;
+        transition: background 0.2s, transform 0.2s;
+      }
+      .review-form input[type="range"]:focus::-ms-thumb {
+        background: #fff;
+        border-color: #1a1a99;
+        transform: scale(1.08);
+      }
+      .review-form input[type="range"]::-webkit-slider-runnable-track {
+        height: 12px;
+        border-radius: 8px;
+        background: transparent;
+      }
+      .review-form input[type="range"]::-ms-fill-lower {
+        background: transparent;
+      }
+      .review-form input[type="range"]::-ms-fill-upper {
+        background: transparent;
+      }
+      @keyframes slideInInput {
+        from { opacity: 0; transform: translateX(-60px) scale(0.95); }
+        to { opacity: 1; transform: translateX(0) scale(1); }
+      }
+      .review-form button[type="submit"] {
+        display: block;
+        margin: 36px auto 0 auto;
+        padding: 18px 54px;
+        font-size: 1.22em;
+        font-weight: 800;
+        background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+        border: none;
+        border-radius: 999px;
+        cursor: pointer;
+        color: #222;
+        box-shadow: 0 4px 18px 0 rgba(255, 236, 140, 0.13);
+        transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+      .review-form button[type="submit"]:hover {
+        background: linear-gradient(90deg, #ffd600 0%, #ffe066 100%);
+        color: #bfa100;
+        transform: translateY(-2px) scale(1.08);
+        box-shadow: 0 12px 32px 0 rgba(255, 236, 140, 0.18);
+        animation: bounce 0.4s;
+      }
+      @keyframes bounce {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.12); }
+        60% { transform: scale(0.98); }
+        100% { transform: scale(1.08); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="movie-header">
+        <div class="poster">
+          <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" />
+        </div>
+        <div class="movie-details">
+          <h1>
+            {{ movie.title }}
+            <span style="font-size: 0.7em; color: #666"
+              >({{ movie.release_date|slice:":4" }})</span
+            >
+          </h1>
+          <div class="movie-meta">
+            <p><strong>Director:</strong> {{ movie.director }}</p>
+            <p><strong>Cast:</strong> {{ movie.cast|join:", " }}</p>
+            <p>
+              <p>
+                <strong>Genres:</strong> {{ movie.genres_names|join:", " }}
+              </p>
+            </p>
+          </div>
+          <p class="rating-box">
+            ⭐ <strong>Rating:</strong> {{ movie.rating|floatformat:1 }}/10
+          </p>
+
+          <div class="action-buttons">
+            <a href="https://www.youtube.com/results?search_query={{ movie.title|urlencode }}+trailer" target="_blank" class="action-btn play-trailer">
+              <span style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path fill="#174a6c" d="M8 5v14l11-7z"/></svg>Play Trailer</span>
+            </a>
+            <a href="{% url 'saved_reviews' %}" class="action-btn saved-reviews">
+              <span style="display:flex;align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"><path fill="#217a3c" d="M17 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H7V5h10v14z"/></svg>Show All Saved Reviews</span>
+            </a>
+            {% if user.is_authenticated %}
+            <form method="get" action="{% url 'add_to_playlist' movie_id %}" style="display:inline-block; margin:0;">
+              <input type="hidden" name="title" value="{{ movie.title }}">
+              <input type="hidden" name="poster_url" value="{{ movie.poster_url }}">
+              <input type="hidden" name="release_date" value="{{ movie.release_date }}">
+              <input type="hidden" name="rating" value="{{ movie.rating }}">
+              <button type="submit" class="action-btn add-playlist" style="margin:0;">
+                <span style="display:flex;align-items:center;">
+                  <span style="font-size:1.5em;font-weight:900;color:#bfa100;margin-right:8px;">+</span>
+                  Add to Playlist
+                </span>
+              </button>
+            </form>
+            {% endif %}
+          </div>
+          <div class="overview-section">
+            <p>{{ movie.overview }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-box">
+        <h2><span class="review-icon">📝</span>Leave a Review</h2>
+      
+        {% if user.is_authenticated %}
+          <form method="post" class="review-form" oninput="updateSlider()">
+            {% csrf_token %}
+            <textarea
+              name="review"
+              rows="5"
+              placeholder="Write your thoughts..."
+              required
+            ></textarea>
+            <label for="rating">Your Rating (1 to 10):</label>
+            <div class="slider-container">
+              <div class="slider-popup" id="sliderPopup">5</div>
+              <input
+                type="range"
+                id="ratingSlider"
+                name="rating"
+                min="1"
+                max="10"
+                step="1"
+                value="5"
+                required
+                oninput="updateSlider()"
+              />
+              <div class="slider-labels">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+              </div>
+            </div>
+            <button type="submit">Submit Review</button>
+          </form>
+        {% else %}
+          <p>
+            Please
+            <a href="{% url 'login' %}?next={{ request.path }}">log in</a>
+            to submit a review.
+          </p>
+        {% endif %}
+      
+        <hr />
+        <h3>All Reviews</h3>
+        <div class="reviews-list">
+        {% for rev in reviews %}
+          <div class="single-review">
+            <div class="review-header">
+              <span class="review-username">{{ rev.user.username }}</span>
+              <span class="review-date">{{ rev.created_at|date:"Y-m-d H:i" }}</span>
+            </div>
+            <div class="review-text">{{ rev.review_text }}</div>
+            <span class="review-rating-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="#e6b800" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              Rating: {{ rev.rating }}/10
+            </span>
+            {% if user.is_authenticated %}
+              <a href="{% url 'save_review' rev.id %}" class="save-btn">💾 Save</a>
+            {% endif %}
+          </div>
+        {% empty %}
+          <p>No reviews yet.</p>
+        {% endfor %}
+        </div>
+      </div>
+      
+    </div>
+
+    <script>
+    function updateSlider() {
+      var slider = document.getElementById('ratingSlider');
+      var popup = document.getElementById('sliderPopup');
+      var percent = (slider.value - slider.min) / (slider.max - slider.min);
+      var sliderWidth = slider.offsetWidth;
+      var thumbWidth = 38; // match CSS
+      var left = percent * (sliderWidth - thumbWidth) + thumbWidth/2;
+      popup.textContent = slider.value;
+      popup.style.left = left + 'px';
+      slider.style.setProperty('--percent', (percent*100)+'%');
+    }
+    window.addEventListener('DOMContentLoaded', function() {
+      updateSlider();
+      document.getElementById('ratingSlider').addEventListener('input', updateSlider);
+    });
+    </script>
+  </body>
+</html>

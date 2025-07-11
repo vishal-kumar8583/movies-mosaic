@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Entertainment | MoviesMosaic</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <section class="about-section">
+    <div class="container">
+      <h2>🎬 Your Entertainment</h2>
+
+      <form method="get" class="entertainment-controls">
+        <input type="text" name="query" placeholder="Search by title" value="{{ query }}">
+        <button type="submit">Search</button>
+        <select name="filter">
+          <option value="popular" {% if filter == 'popular' %}selected{% endif %}>Popular</option>
+          <option value="latest" {% if filter == 'latest' %}selected{% endif %}>Latest</option>
+        </select>
+        <button type="submit">Filter</button>
+      </form> 
+
+      {% if movies %}
+      <div class="movie-grid">
+        {% for movie in movies %}
+          <a href="{% url 'movie_detail' movie.id %}" class="movie-card">
+  <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="movie-poster" />
+  <div class="movie-info">
+    <div class="movie-title">{{ movie.title }}</div>
+    <div class="movie-rating">⭐ {{ movie.rating }} | {{ movie.release_date }}</div>
+  </div>
+</a>
+        {% endfor %}
+      </div>
+      {% else %}
+        <p>No movies found for your search.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="pagination">
+    {% if page > 1 %}
+      <a href="?{% if query %}query={{ query }}&{% else %}filter={{ filter }}&{% endif %}page={{ page|add:"-1" }}" class="prev">Previous</a>
+    {% endif %}
+  
+    <span>Page {{ page }} of {{ total_pages }}</span>
+  
+    {% if page < total_pages %}
+      <a href="?{% if query %}query={{ query }}&{% else %}filter={{ filter }}&{% endif %}page={{ page|add:"1" }}" class="next">Next</a>
+    {% endif %}
+  </div>
+
+  <!-- Safe JSON output for movies data -->
+  {{ movies|json_script:"movies-data" }}
+
+  <script>
+    const movies = JSON.parse(document.getElementById('movies-data').textContent);
+    movies.forEach(movie => {
+      console.log(`ID: ${movie.id || 'N/A'}, Title: ${movie.title}`);
+    });
+  </script>
+
+</body>
+
+</html>

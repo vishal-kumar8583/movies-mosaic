@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Signup | MoviesMosaic</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .signup-section {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--light-bg);
+        padding: 40px 20px;
+      }
+
+      .signup-box {
+        background-color: var(--white-bg);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--card-shadow);
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .signup-box h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-family: var(--font-heading);
+      }
+
+      .signup-box form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .signup-box label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--dark-text);
+      }
+
+      .signup-box input {
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 1em;
+      }
+
+      .signup-box button {
+        background-color: var(--primary-color);
+        color: var(--dark-text);
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .signup-box button:hover {
+        background-color: var(--primary-hover);
+        color: #000;
+      }
+
+      .signup-box p {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 0.95em;
+      }
+
+      .signup-box p a {
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="signup-section">
+      <div class="signup-box">
+        <h2>Create Your Account</h2>
+        {% if messages %}
+        <ul style="margin-bottom: 15px">
+          {% for message in messages %}
+          <li style="color: red; font-size: 0.95em">{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form method="POST" action="/signup/">
+          {% csrf_token %}
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value="{{ username|default:'' }}"
+            required
+          />
+
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ email|default:'' }}"
+            required
+          />
+
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value=""
+            required
+          />
+
+          <button type="submit">Sign Up</button>
+        </form>
+        <p>Already have an account? <a href="/login/">Log In</a></p>
+      </div>
+    </section>
+  </body>
+</html>

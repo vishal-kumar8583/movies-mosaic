@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoviesMosaic</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="main-header">
+      <div class="container">
+        <a href="/" class="logo">Movies<span>Mosaic</span></a>
+        <nav class="main-nav">
+          <ul class="nav-links">
+            <li><a href="/about">About</a></li>
+            <li><a href="/entertainment">Your Entertainment</a></li>
+          </ul>
+        </nav>
+        <a href="{% url 'signup' %}" class="login-btn">Login / Signup</a>
+      </div>
+    </header>
+
+    <section class="hero-section">
+      <div class="container hero-content-wrapper">
+        <div class="hero-text">
+          <h1>Discover. Review. Rate.</h1>
+          <p>
+            Explore thousands of movies, read reviews, and share your own
+            opinions on MoviesMosaic.
+          </p>
+          <a href="/entertainment" class="cta-btn">Explore Now</a>
+        </div>
+        <div class="hero-image">
+            <img src="{% static '/Banner.png' %}" alt="Movie banner" />
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="about-section">
+      <div class="container">
+        <h2>About Us</h2>
+        <p>
+          MoviesMosaic is your go-to platform for discovering and reviewing
+          movies. Whether you're a casual viewer or a film enthusiast, join our
+          community to explore and rate cinematic gems.
+        </p>
+      </div>
+    </section>
+
+    <section class="popular-movies-section">
+      <div class="container">
+        <h2>🔥 Popular Movies</h2>
+        <div class="movie-grid">
+          {% for movie in movies %}
+          <div class="movie-card">
+            <img
+              src="{{ movie.poster_url }}"
+              alt="{{ movie.title }}"
+              class="movie-poster"
+            />
+            <div class="movie-info">
+              <div class="movie-title">{{ movie.title }}</div>
+              <div class="movie-rating">
+                <span class="star-icon">⭐{{ movie.rating|floatformat:1 }} | {{ movie.release_date }}
+              </div>
+              {% if user.is_authenticated %}
+              <form method="get" action="{% url 'add_to_playlist' movie.id %}" style="margin-top:10px;">
+                <input type="hidden" name="title" value="{{ movie.title }}">
+                <input type="hidden" name="poster_url" value="{{ movie.poster_url }}">
+                <input type="hidden" name="release_date" value="{{ movie.release_date }}">
+                <input type="hidden" name="rating" value="{{ movie.rating }}">
+                <button type="submit" class="add-playlist-btn" style="background:linear-gradient(90deg,#fff7b2,#ffe066);color:#222;font-weight:600;padding:7px 18px;border-radius:8px;border:none;cursor:pointer;transition:background 0.2s;">➕ Add to Playlist</button>
+              </form>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      <div class="container">
+        <p>&copy; 2025 MoviesMosaic. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
